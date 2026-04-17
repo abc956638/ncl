@@ -677,17 +677,6 @@ int cro_ClearWorkstation(GKSC *gksc)
 
     return ret;
 }
-// add by abc956638
-unsigned char *get_argb_cairo_image_surface(int wks_id, int *width, int *height, int *stride)
-{
-    cairo_surface_t *surface = getSurface(wks_id);
-    *width = cairo_image_surface_get_width(surface);
-    *height = cairo_image_surface_get_height(surface);
-    *stride = cairo_image_surface_get_stride(surface);
-    unsigned char *imageDataArgb = cairo_image_surface_get_data(surface);
-    return imageDataArgb;
-}
-// end add
 
 int cro_CloseWorkstation(GKSC *gksc)
 {

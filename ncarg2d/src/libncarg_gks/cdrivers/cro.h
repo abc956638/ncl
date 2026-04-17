@@ -287,9 +287,7 @@ extern int qt_screen_height;
 #endif
 
 static cairo_t *getContext(int wksId);
-// add by abc956638
-unsigned char *get_argb_cairo_image_surface(int wks_id, int *width, int *height, int *stride);
-// end add
+
 void reverse_chars(char *);
 
 #ifdef BuildQtEnabled
