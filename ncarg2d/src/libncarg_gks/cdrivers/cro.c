@@ -20,6 +20,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <stdint.h>
 
 #include <math.h>
 #include <stdlib.h>
@@ -687,7 +688,31 @@ unsigned char *get_argb_cairo_image_surface(int wks_id, int *width, int *height,
     *width = cairo_image_surface_get_width(surface);
     *height = cairo_image_surface_get_height(surface);
     *stride = cairo_image_surface_get_stride(surface);
-    return cairo_image_surface_get_data(surface);
+    unsigned char *imageData = cairo_image_surface_get_data(surface);
+    // un-premultiply 反预乘 Alpha
+    for (int ii = 0, y = 0; y < *height; y++)
+    {
+        for (int x = 0; x < *width; x++, ii += 4) // WARN,这里注意宽度的问题
+        {
+            uint8_t a = imageData[ii + 3];
+            if (a > 0)
+            {
+                uint8_t b = imageData[ii];
+                uint8_t g = imageData[ii + 1];
+                uint8_t r = imageData[ii + 2];
+                uint16_t divisor = a;
+
+                r = (uint8_t)(((uint16_t)r * 255 + divisor / 2) / divisor);
+                g = (uint8_t)(((uint16_t)g * 255 + divisor / 2) / divisor);
+                b = (uint8_t)(((uint16_t)b * 255 + divisor / 2) / divisor);
+
+                imageData[ii + 2] = r;
+                imageData[ii + 1] = g;
+                imageData[ii] = b;
+            }
+        }
+    }
+    return imageData;
 }
 // end add
 
