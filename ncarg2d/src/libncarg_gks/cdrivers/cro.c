@@ -678,44 +678,6 @@ int cro_ClearWorkstation(GKSC *gksc)
     return ret;
 }
 
-// add by abc956638
-unsigned char *get_argb_cairo_image_surface(int wks_id, int *width, int *height, int *stride)
-{
-    cairo_t *context = getContext(wks_id);
-    cairo_stroke(context);
-    cairo_show_page(context);
-    cairo_surface_t *surface = getSurface(wks_id);
-    *width = cairo_image_surface_get_width(surface);
-    *height = cairo_image_surface_get_height(surface);
-    *stride = cairo_image_surface_get_stride(surface);
-    unsigned char *imageData = cairo_image_surface_get_data(surface);
-    // un-premultiply 反预乘 Alpha
-    for (int ii = 0, y = 0; y < *height; y++)
-    {
-        for (int x = 0; x < *width; x++, ii += 4) // WARN,这里注意宽度的问题
-        {
-            uint8_t a = imageData[ii + 3];
-            if (a > 0)
-            {
-                uint8_t b = imageData[ii];
-                uint8_t g = imageData[ii + 1];
-                uint8_t r = imageData[ii + 2];
-                uint16_t divisor = a;
-
-                r = (uint8_t)(((uint16_t)r * 255 + divisor / 2) / divisor);
-                g = (uint8_t)(((uint16_t)g * 255 + divisor / 2) / divisor);
-                b = (uint8_t)(((uint16_t)b * 255 + divisor / 2) / divisor);
-
-                imageData[ii + 2] = r;
-                imageData[ii + 1] = g;
-                imageData[ii] = b;
-            }
-        }
-    }
-    return imageData;
-}
-// end add
-
 int cro_CloseWorkstation(GKSC *gksc)
 {
     CROddp *psa = (CROddp *)gksc->ddp;
@@ -3237,3 +3199,41 @@ void reverse_chrs(char *str)
         strncpy(str + index, &ctmp, 1);
     }
 }
+
+// add by abc956638
+unsigned char *get_argb_cairo_image_surface(int wks_id, int *width, int *height, int *stride)
+{
+    cairo_t *context = getContext(wks_id);
+    cairo_stroke(context);
+    // cairo_show_page(context);
+    cairo_surface_t *surface = getSurface(wks_id);
+    *width = cairo_image_surface_get_width(surface);
+    *height = cairo_image_surface_get_height(surface);
+    *stride = cairo_image_surface_get_stride(surface);
+    unsigned char *imageData = cairo_image_surface_get_data(surface);
+    // un-premultiply 反预乘 Alpha
+    for (int ii = 0, y = 0; y < *height; y++)
+    {
+        for (int x = 0; x < *width; x++, ii += 4) // WARN,这里注意宽度的问题
+        {
+            uint8_t a = imageData[ii + 3];
+            if (a > 0)
+            {
+                uint8_t b = imageData[ii];
+                uint8_t g = imageData[ii + 1];
+                uint8_t r = imageData[ii + 2];
+                uint16_t divisor = a;
+
+                r = (uint8_t)(((uint16_t)r * 255 + divisor / 2) / divisor);
+                g = (uint8_t)(((uint16_t)g * 255 + divisor / 2) / divisor);
+                b = (uint8_t)(((uint16_t)b * 255 + divisor / 2) / divisor);
+
+                imageData[ii + 2] = r;
+                imageData[ii + 1] = g;
+                imageData[ii] = b;
+            }
+        }
+    }
+    return imageData;
+}
+// end add

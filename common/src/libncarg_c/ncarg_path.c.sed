@@ -40,6 +40,9 @@
 #include <fortran.h>
 #endif
 
+#ifndef NCARGURL
+#define NCARGURL    "https://www.ncl.ucar.edu"
+#endif
 /*
  *	Create a string by concatenating the names $PREFIX and $postfix
  *	$postfix is converted to caps if necessary.
