@@ -3204,8 +3204,8 @@ void reverse_chrs(char *str)
 unsigned char *get_argb_cairo_image_surface(int wks_id, int *width, int *height, int *stride)
 {
     cairo_t *context = getContext(wks_id);
-    cairo_stroke(context);
-    // cairo_show_page(context);
+    // cairo_stroke(context);
+    //  cairo_show_page(context);
     cairo_surface_t *surface = getSurface(wks_id);
     *width = cairo_image_surface_get_width(surface);
     *height = cairo_image_surface_get_height(surface);
